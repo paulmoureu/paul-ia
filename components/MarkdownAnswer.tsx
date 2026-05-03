@@ -17,7 +17,7 @@ export function MarkdownAnswer({ content }: MarkdownAnswerProps) {
   const normalizedContent = normalizeMath(content);
 
   return (
-    <article className="rounded-lg border border-slate-200 bg-white p-5 text-base leading-8 text-slate-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] sm:p-7">
+    <article className="future-tile rounded-lg border p-5 text-base leading-8 text-slate-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:p-7">
       <ReactMarkdown
         remarkPlugins={[remarkMath]}
         rehypePlugins={[rehypeKatex]}
@@ -69,7 +69,7 @@ export function MarkdownAnswer({ content }: MarkdownAnswerProps) {
             );
           },
           pre: ({ children }) => (
-            <pre className="my-5 overflow-x-auto rounded-lg bg-[#1f2930] p-4 text-sm leading-7 text-white">
+            <pre className="my-5 overflow-x-auto rounded-lg border border-slate-700/60 bg-[#07111d] p-4 text-sm leading-7 text-white">
               {children}
             </pre>
           ),

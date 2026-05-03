@@ -198,7 +198,7 @@ function SearchableProfileField({ field, value, onChange }: SearchableProfileFie
       />
 
       {isFocused ? (
-        <div className="flex max-h-36 flex-wrap gap-2 overflow-y-auto rounded-lg border border-slate-100 bg-white p-2 shadow-sm">
+        <div className="future-tile flex max-h-36 flex-wrap gap-2 overflow-y-auto rounded-lg border p-2 shadow-sm">
           {filteredSuggestions.length ? (
             filteredSuggestions.map((suggestion) => (
               <button
@@ -206,7 +206,7 @@ function SearchableProfileField({ field, value, onChange }: SearchableProfileFie
                 type="button"
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => onChange(suggestion)}
-                className="rounded-full border border-slate-200 bg-paper px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-lagoon hover:text-lagoon"
+                className="future-secondary-button rounded-full px-3 py-1 text-xs font-semibold transition hover:border-lagoon hover:text-lagoon"
               >
                 {suggestion}
               </button>
@@ -262,10 +262,10 @@ export function ProfileForm({ profile, onChange }: ProfileFormProps) {
                     responseMode: mode.value,
                   })
                 }
-                className={`rounded-lg border p-4 text-left transition ${
+                className={`rounded-lg border p-4 text-left transition active:scale-[0.98] ${
                   isSelected
-                    ? "border-lagoon bg-lagoon text-white"
-                    : "border-slate-200 bg-white text-ink hover:border-lagoon"
+                    ? "border-lagoon bg-lagoon/20 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
+                    : "future-secondary-button text-ink hover:border-lagoon"
                 }`}
               >
                 <span className="block text-sm font-black">{mode.label}</span>

@@ -34,15 +34,15 @@ const taskLabels: Record<string, string> = {
 };
 
 const modelColors: Record<string, string> = {
-  Perplexity: "border-cyan-200 bg-cyan-50 text-cyan-900",
-  Claude: "border-orange-200 bg-orange-50 text-orange-900",
-  "Paul IA": "border-emerald-200 bg-emerald-50 text-emerald-900",
-  "Paul IA Vision": "border-blue-200 bg-blue-50 text-blue-900",
-  "Paul IA Image": "border-pink-200 bg-pink-50 text-pink-900",
-  OpenAI: "border-emerald-200 bg-emerald-50 text-emerald-900",
-  "OpenAI Vision": "border-blue-200 bg-blue-50 text-blue-900",
-  "GPT Image": "border-pink-200 bg-pink-50 text-pink-900",
-  Gemini: "border-violet-200 bg-violet-50 text-violet-900",
+  Perplexity: "border-cyan-300/25 bg-cyan-300/10 text-cyan-100",
+  Claude: "border-amber-300/25 bg-amber-300/10 text-amber-100",
+  "Paul IA": "border-emerald-300/25 bg-emerald-300/10 text-emerald-100",
+  "Paul IA Vision": "border-sky-300/25 bg-sky-300/10 text-sky-100",
+  "Paul IA Image": "border-rose-300/25 bg-rose-300/10 text-rose-100",
+  OpenAI: "border-emerald-300/25 bg-emerald-300/10 text-emerald-100",
+  "OpenAI Vision": "border-sky-300/25 bg-sky-300/10 text-sky-100",
+  "GPT Image": "border-rose-300/25 bg-rose-300/10 text-rose-100",
+  Gemini: "border-teal-300/25 bg-teal-300/10 text-teal-100",
 };
 
 type ResultCardProps = {
@@ -52,6 +52,7 @@ type ResultCardProps = {
 };
 
 const voiceOptions = [
+  { id: "elevenlabs", label: "Ma voix" },
   { id: "marin", label: "Marin" },
   { id: "cedar", label: "Cedar" },
   { id: "coral", label: "Coral" },
@@ -61,7 +62,7 @@ const voiceOptions = [
 ];
 
 export function ResultCard({ result, error, accessCode }: ResultCardProps) {
-  const [voice, setVoice] = useState("marin");
+  const [voice, setVoice] = useState("elevenlabs");
   const [audioUrl, setAudioUrl] = useState("");
   const [audioMeta, setAudioMeta] = useState("");
   const [audioError, setAudioError] = useState("");
@@ -92,7 +93,8 @@ export function ResultCard({ result, error, accessCode }: ResultCardProps) {
       }
 
       setAudioUrl(data.audioDataUrl);
-      setAudioMeta(`${displayModelName(data.model)} · voix ${data.voice} · ${data.format?.toUpperCase()}`);
+      const provider = data.provider ? `${displayProviderName(data.provider)} · ` : "";
+      setAudioMeta(`${provider}${displayModelName(data.model)} · voix ${data.voice} · ${data.format?.toUpperCase()}`);
     } catch (caughtError) {
       setAudioError(
         caughtError instanceof Error
@@ -106,7 +108,7 @@ export function ResultCard({ result, error, accessCode }: ResultCardProps) {
 
   if (error) {
     return (
-      <section className="rounded-lg border border-red-100 bg-red-50 p-6 text-red-900">
+      <section className="future-panel rounded-2xl p-6 text-red-100">
         <h2 className="text-lg font-bold">Génération impossible</h2>
         <p className="mt-2 text-sm leading-6">{error}</p>
       </section>
@@ -115,14 +117,14 @@ export function ResultCard({ result, error, accessCode }: ResultCardProps) {
 
   if (!result) {
     return (
-      <section className="rounded-lg border border-dashed border-slate-300 bg-white/70 p-8 text-center text-slate-500">
+      <section className="future-panel rounded-2xl border-dashed p-8 text-center text-slate-300">
         Ta réponse apparaîtra ici.
       </section>
     );
   }
 
   return (
-    <section className="rounded-lg border border-white bg-white p-6 shadow-soft sm:p-8">
+    <section className="future-panel rounded-2xl p-6 sm:p-8">
       <div className="flex flex-col gap-4 border-b border-slate-100 pb-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="text-xs font-bold uppercase text-sage">Résultat</p>
@@ -177,7 +179,7 @@ export function ResultCard({ result, error, accessCode }: ResultCardProps) {
       <MarkdownAnswer content={result.finalAnswer} />
 
       {!result.demoMode && result.finalAnswer ? (
-        <div className="mt-5 rounded-lg border border-slate-100 bg-paper p-4">
+        <div className="future-tile mt-5 rounded-lg border p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <label className="space-y-2">
               <span className="block text-xs font-bold uppercase text-slate-500">
@@ -200,7 +202,7 @@ export function ResultCard({ result, error, accessCode }: ResultCardProps) {
               type="button"
               onClick={handleListen}
               disabled={isGeneratingAudio}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-ink px-5 py-2 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-lagoon disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+              className="future-primary-button inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {isGeneratingAudio ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -231,7 +233,7 @@ export function ResultCard({ result, error, accessCode }: ResultCardProps) {
       ) : null}
 
       {result.generatedImage?.dataUrl || result.generatedImage?.url ? (
-        <div className="mt-5 overflow-hidden rounded-lg border border-slate-100 bg-paper">
+        <div className="future-tile mt-5 overflow-hidden rounded-lg border">
           <img
             src={result.generatedImage.dataUrl ?? result.generatedImage.url}
             alt="Image générée par Paul IA"
@@ -252,7 +254,7 @@ export function ResultCard({ result, error, accessCode }: ResultCardProps) {
       ) : null}
 
       {result.providerNotes?.length ? (
-        <div className="mt-5 rounded-lg bg-paper p-4 text-sm leading-6 text-slate-700">
+        <div className="future-tile mt-5 rounded-lg border p-4 text-sm leading-6 text-slate-700">
           {result.providerNotes.map((note) => (
             <p key={note}>{note}</p>
           ))}

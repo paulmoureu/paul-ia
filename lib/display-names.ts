@@ -13,6 +13,7 @@ export function displayModelName(model?: string) {
   if (normalizedModel.includes("image")) return "Paul IA Image";
   if (normalizedModel.includes("transcribe")) return "Paul IA Dictée";
   if (normalizedModel.includes("tts")) return "Paul IA Voix";
+  if (normalizedModel.includes("eleven")) return "Paul IA Voix Perso";
 
   return model
     .replaceAll("OpenAI", "Paul IA")
@@ -28,6 +29,7 @@ export function displayProviderName(name?: string) {
     .replaceAll("OpenAI Vision", "Paul IA Vision")
     .replaceAll("GPT Image", "Paul IA Image")
     .replaceAll("OpenAI Audio", "Paul IA Audio")
+    .replaceAll("ElevenLabs", "Paul IA Voix Perso")
     .replaceAll("OpenAI", "Paul IA")
     .replaceAll("ChatGPT", "Paul IA")
     .replaceAll("GPT", "Paul IA");

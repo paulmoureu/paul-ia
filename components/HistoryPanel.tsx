@@ -59,7 +59,7 @@ export function HistoryPanel({ history, onRestore, onClear }: HistoryPanelProps)
   }, [history, query]);
 
   return (
-    <aside className="rounded-lg border border-white bg-white p-5 shadow-soft sm:p-6">
+    <aside className="future-panel rounded-2xl p-5 sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-black uppercase text-sage">Historique</p>
@@ -70,7 +70,7 @@ export function HistoryPanel({ history, onRestore, onClear }: HistoryPanelProps)
           <button
             type="button"
             onClick={onClear}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:border-coral hover:text-coral"
+            className="future-secondary-button inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition hover:border-coral hover:text-coral"
             aria-label="Effacer l'historique"
             title="Effacer l'historique"
           >
@@ -79,7 +79,7 @@ export function HistoryPanel({ history, onRestore, onClear }: HistoryPanelProps)
         ) : null}
       </div>
 
-      <label className="mt-5 flex min-h-11 items-center gap-3 rounded-full border border-slate-200 bg-paper px-4 text-sm text-slate-700 focus-within:border-lagoon focus-within:ring-4 focus-within:ring-lagoon/10">
+      <label className="future-tile mt-5 flex min-h-11 items-center gap-3 rounded-full border px-4 text-sm text-slate-700 focus-within:border-lagoon focus-within:ring-4 focus-within:ring-lagoon/10">
         <Search className="h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
         <input
           value={query}
@@ -91,13 +91,13 @@ export function HistoryPanel({ history, onRestore, onClear }: HistoryPanelProps)
 
       <div className="mt-5 max-h-[34rem] space-y-3 overflow-y-auto pr-1">
         {!history.length ? (
-          <div className="rounded-lg border border-dashed border-slate-200 bg-paper p-5 text-sm leading-6 text-slate-600">
+          <div className="future-tile rounded-lg border border-dashed p-5 text-sm leading-6 text-slate-600">
             Tes prochaines recherches apparaîtront ici automatiquement.
           </div>
         ) : null}
 
         {history.length && !filteredHistory.length ? (
-          <div className="rounded-lg border border-dashed border-slate-200 bg-paper p-5 text-sm leading-6 text-slate-600">
+          <div className="future-tile rounded-lg border border-dashed p-5 text-sm leading-6 text-slate-600">
             Aucun résultat dans ton historique pour cette recherche.
           </div>
         ) : null}
@@ -105,7 +105,7 @@ export function HistoryPanel({ history, onRestore, onClear }: HistoryPanelProps)
         {filteredHistory.map((item) => (
           <article
             key={item.id}
-            className="rounded-lg border border-slate-100 bg-white p-4 transition hover:border-lagoon/40 hover:shadow-[0_14px_40px_-28px_rgba(24,34,48,0.45)]"
+            className="future-tile rounded-lg border p-4 transition hover:border-lagoon/40 hover:-translate-y-0.5 hover:shadow-[0_18px_60px_-38px_rgba(56,189,248,0.72)]"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
@@ -137,7 +137,7 @@ export function HistoryPanel({ history, onRestore, onClear }: HistoryPanelProps)
             <button
               type="button"
               onClick={() => onRestore(item)}
-              className="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-slate-200 bg-paper px-4 py-2 text-xs font-black uppercase text-ink transition hover:border-lagoon hover:text-lagoon"
+              className="future-secondary-button mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 py-2 text-xs font-black uppercase transition hover:border-lagoon hover:text-lagoon"
             >
               <RotateCcw className="h-4 w-4" aria-hidden="true" />
               Revoir

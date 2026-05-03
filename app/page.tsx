@@ -199,48 +199,54 @@ export default function Home() {
   }
 
   return (
-    <main>
+    <main className="relative">
       <section className="mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-7xl flex-col justify-center px-5 py-12 sm:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.12fr_0.88fr] lg:items-center">
+        <div className="grid gap-12 lg:grid-cols-[1.16fr_0.84fr] lg:items-center">
           <div className="max-w-3xl">
-            <p className="text-sm font-black uppercase text-lagoon">Paul IA</p>
-            <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-tight text-ink sm:text-6xl">
-              L’assistant IA qui travaille comme un vrai copilote d’étude.
+            <p className="future-kicker text-xs font-black uppercase">Paul IA</p>
+            <h1 className="mt-5 text-5xl font-black leading-[0.94] tracking-tight text-ink sm:text-6xl lg:text-7xl">
+              Ton cockpit IA pour apprendre plus vite.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-700">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
               Tu écris ton besoin. Paul IA comprend ton profil, choisit la bonne version, puis
               indique les autres IA qui pourraient compléter ton travail : sources, code, image,
               oral, résumé ou fiche de révision.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <a
                 href="#assistant"
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-7 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-lagoon active:scale-[0.98]"
+                className="future-primary-button inline-flex min-h-12 items-center justify-center rounded-full px-7 py-3 text-sm font-black transition hover:-translate-y-0.5 active:scale-[0.98]"
               >
                 Essayer Paul IA
               </a>
+              <span className="future-chip inline-flex min-h-12 items-center justify-center rounded-full px-5 py-3 text-xs font-black uppercase">
+                Texte · voix · image · recherche
+              </span>
             </div>
           </div>
 
-          <div className="rounded-[1.75rem] border border-slate-200/70 bg-white p-6 shadow-[0_24px_70px_-42px_rgba(24,34,48,0.42)]">
-            <p className="text-sm font-black uppercase text-sage">Ce que l’outil fait</p>
-            <div className="mt-5 divide-y divide-slate-200">
+          <div className="future-panel rounded-[1.75rem] p-6">
+            <div className="flex items-center justify-between gap-4">
+              <p className="future-kicker text-xs font-black uppercase">Console d'étude</p>
+              <span className="future-status-dot h-2.5 w-2.5 rounded-full bg-lagoon" />
+            </div>
+            <div className="mt-5 divide-y divide-slate-800/70">
               <div className="py-4">
                 <h2 className="text-xl font-black tracking-tight text-ink">Réponses adaptées</h2>
-                <p className="mt-2 text-sm leading-7 text-slate-600">
+                <p className="mt-2 text-sm leading-7 text-slate-400">
                   Niveau, matière, objectif, style et consignes personnelles sont pris en compte.
                 </p>
               </div>
               <div className="py-4">
                 <h2 className="text-xl font-black tracking-tight text-ink">Paul IA en premier</h2>
-                <p className="mt-2 text-sm leading-7 text-slate-600">
+                <p className="mt-2 text-sm leading-7 text-slate-400">
                   La réponse principale est générée avec Paul IA, puis enrichie par des suggestions
                   d’IA complémentaires.
                 </p>
               </div>
               <div className="py-4">
                 <h2 className="text-xl font-black tracking-tight text-ink">Un outil pour apprendre</h2>
-                <p className="mt-2 text-sm leading-7 text-slate-600">
+                <p className="mt-2 text-sm leading-7 text-slate-400">
                   Fiches, résumés, scripts d’oral, correction de code, QCM, recherche et images.
                 </p>
               </div>
@@ -251,9 +257,9 @@ export default function Home() {
 
       <section id="assistant" className="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="rounded-lg border border-white bg-white/90 p-6 shadow-soft sm:p-8">
+          <div className="future-panel rounded-2xl p-6 sm:p-8">
             <div className="mb-6">
-              <p className="text-xs font-black uppercase text-sage">
+              <p className="future-kicker text-xs font-black uppercase">
                 Profil étudiant
               </p>
               <h2 className="mt-2 text-3xl font-black text-ink">Dis à Paul IA comment t'aider</h2>
@@ -261,9 +267,9 @@ export default function Home() {
             <ProfileForm profile={profile} onChange={setProfile} />
           </div>
 
-          <div className="rounded-lg border border-white bg-white/90 p-6 shadow-soft sm:p-8">
+          <div className="future-panel rounded-2xl p-6 sm:p-8">
             <div className="mb-6">
-              <p className="text-xs font-black uppercase text-sage">
+              <p className="future-kicker text-xs font-black uppercase">
                 Demande
               </p>
               <h2 className="mt-2 text-3xl font-black text-ink">Explique ton besoin</h2>

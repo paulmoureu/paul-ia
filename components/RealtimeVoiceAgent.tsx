@@ -165,7 +165,7 @@ export function RealtimeVoiceAgent({ accessCode, profile }: RealtimeVoiceAgentPr
   const isLive = status === "live" || status === "connecting";
 
   return (
-    <section className="mb-5 rounded-lg border border-slate-200 bg-white p-4">
+    <section className="future-tile mb-5 rounded-lg border p-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
@@ -191,7 +191,7 @@ export function RealtimeVoiceAgent({ accessCode, profile }: RealtimeVoiceAgentPr
           className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-black transition hover:-translate-y-0.5 ${
             isLive
               ? "bg-coral text-white hover:bg-coral"
-              : "bg-ink text-white hover:bg-lagoon"
+              : "future-primary-button"
           }`}
         >
           {isLive ? (
@@ -204,13 +204,13 @@ export function RealtimeVoiceAgent({ accessCode, profile }: RealtimeVoiceAgentPr
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-lg bg-paper p-3">
+        <div className="future-tile rounded-lg border p-3">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
             <Radio className="h-4 w-4 text-lagoon" aria-hidden="true" />
             {statusText}
           </p>
         </div>
-        <div className="rounded-lg bg-paper p-3">
+        <div className="future-tile rounded-lg border p-3">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
             <Volume2 className="h-4 w-4 text-lagoon" aria-hidden="true" />
             {sessionLabel || "Voix IA générée, pas une voix humaine."}

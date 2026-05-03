@@ -190,7 +190,7 @@ export function RequestBox({
         />
       </label>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div className="future-tile rounded-lg border p-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-black text-ink">Voix</p>
@@ -207,7 +207,7 @@ export function RequestBox({
               className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 ${
                 isRecording
                   ? "bg-coral text-white hover:bg-coral"
-                  : "border border-slate-300 bg-white text-ink hover:border-lagoon hover:text-lagoon"
+                  : "future-secondary-button hover:border-lagoon hover:text-lagoon"
               }`}
             >
               {isRecording ? (
@@ -222,7 +222,7 @@ export function RequestBox({
               type="button"
               onClick={() => audioInputRef.current?.click()}
               disabled={isRecording || isTranscribing}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-black text-ink transition hover:-translate-y-0.5 hover:border-lagoon hover:text-lagoon disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+              className="future-secondary-button inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-black transition hover:-translate-y-0.5 hover:border-lagoon hover:text-lagoon disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {isTranscribing ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -253,7 +253,7 @@ export function RequestBox({
         ) : null}
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div className="future-tile rounded-lg border p-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-black text-ink">Photo ou image</p>
@@ -265,7 +265,7 @@ export function RequestBox({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-black text-ink transition hover:-translate-y-0.5 hover:border-lagoon hover:text-lagoon"
+            className="future-secondary-button inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-black transition hover:-translate-y-0.5 hover:border-lagoon hover:text-lagoon"
           >
             <ImagePlus className="h-4 w-4" aria-hidden="true" />
             Ajouter / prendre une photo
@@ -286,7 +286,7 @@ export function RequestBox({
         ) : null}
 
         {imageAttachment ? (
-          <div className="mt-4 flex items-center gap-4 rounded-lg bg-paper p-3">
+          <div className="future-tile mt-4 flex items-center gap-4 rounded-lg border p-3">
             <img
               src={imageAttachment.dataUrl}
               alt="Aperçu de l'image envoyée"
@@ -306,7 +306,7 @@ export function RequestBox({
                 onImageAttachmentChange?.(null);
                 if (inputRef.current) inputRef.current.value = "";
               }}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-coral hover:text-coral"
+              className="future-secondary-button inline-flex h-10 w-10 items-center justify-center rounded-full transition hover:border-coral hover:text-coral"
               aria-label="Retirer l'image"
             >
               <X className="h-4 w-4" aria-hidden="true" />
@@ -319,7 +319,7 @@ export function RequestBox({
         type="button"
         onClick={onSubmit}
         disabled={isLoading || !canSubmit}
-        className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-bold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-lagoon disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:w-auto"
+        className="future-primary-button inline-flex min-h-12 w-full items-center justify-center rounded-full px-6 py-3 text-sm font-black shadow-soft transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:w-auto"
       >
         {isLoading ? "Paul IA réfléchit..." : "Générer avec Paul IA"}
       </button>

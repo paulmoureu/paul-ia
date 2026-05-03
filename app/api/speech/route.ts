@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { callElevenLabsSpeech } from "@/lib/providers/elevenlabs-speech";
 import { callOpenAISpeech } from "@/lib/providers/openai-speech";
 import { getServerApiKey } from "@/lib/server-api-keys";
 
@@ -45,7 +46,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Aucun texte à lire." }, { status: 400 });
     }
 
-    const speech = await callOpenAISpeech(text, body.voice);
+    const speech = body.voice === "elevenlabs"
+      ? await callElevenLabsSpeech(text)
+      : await callOpenAISpeech(text, body.voice);
 
     return NextResponse.json({
       ...speech,
