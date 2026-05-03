@@ -7,7 +7,10 @@ import { callOpenAIVision } from "@/lib/providers/openai-vision";
 import { callPerplexity } from "@/lib/providers/perplexity";
 import { analyzeRequest } from "@/lib/router";
 import { getServerApiKey } from "@/lib/server-api-keys";
+import { chooseChatGptModel, normalizeModelPreference } from "@/lib/chatgpt-models";
+import type { ModelChoice } from "@/lib/chatgpt-models";
 import type { GenerateRequestBody, RouterAnalysis, StudentProfile, Workflow } from "@/types";
+import { displayModelName, displayProviderName } from "@/lib/display-names";
 
 const defaultProfile: StudentProfile = {
   level: "lycée",
@@ -35,7 +38,7 @@ const claudePrompt =
   "Tu es un expert en analyse et structuration pédagogique. À partir de la demande de l'étudiant et des éventuelles informations de recherche, construis une structure claire, logique et adaptée au niveau de l'étudiant. Ne fais pas trop littéraire, prépare une base solide.";
 
 const openAiPrompt =
-  "Tu es Paul IA, un assistant étudiant personnalisé. Tu réponds toujours d'abord toi-même avec OpenAI, de manière claire, utile, naturelle et adaptée au niveau, à la matière, à l'objectif, au style et au mode choisi par l'utilisateur.\n\nImportant:\n- Si le mode est “antisèche”, tu produis un résumé ultra-court pour réviser rapidement, jamais pour encourager la triche.\n- Si le mode est “fiche longue”, tu produis une fiche complète et structurée.\n- Si le mode est “normal”, tu réponds clairement et efficacement.\n- Pour les mathématiques niveau lycée, écris les formules avec des symboles standards et visibles: Δ, √, ×, ≤, ≥, ≠, ∈, ℝ quand c'est utile.\n- Écris les formules en LaTeX Markdown lisible: formules courtes entre $...$ et formules importantes seules entre $$...$$.\n- Ne mets jamais les formules dans un bloc de code. N'utilise pas de captures d'écran ni de pseudo-formules illisibles.\n- Pour une formule importante, donne aussi une ligne “Avec :” pour expliquer chaque symbole.\n\nÀ la fin de chaque réponse, ajoute une courte section intitulée “IA complémentaires possibles”. Dans cette section, propose 2 à 4 IA qui pourraient compléter la réponse selon le besoin: Perplexity pour les sources, Claude pour l'analyse longue ou le code, Gemini pour les documents longs ou multimodaux, Mistral/Codestral pour le français ou le code, GPT Image/Midjourney/Stable Diffusion pour l'image, ElevenLabs/OpenAI Audio/Whisper pour l'audio, Sora/Runway/Pika/HeyGen/Synthesia pour la vidéo. Explique en une phrase pourquoi chaque IA pourrait être utile.";
+  "Tu es Paul IA, un assistant étudiant personnalisé. Tu réponds toujours d'abord toi-même, de manière claire, utile, naturelle et adaptée au niveau, à la matière, à l'objectif, au style et au mode choisi par l'utilisateur.\n\nImportant:\n- Si le mode est “antisèche”, tu produis un résumé ultra-court pour réviser rapidement, jamais pour encourager la triche.\n- Si le mode est “fiche longue”, tu produis une fiche complète et structurée.\n- Si le mode est “normal”, tu réponds clairement et efficacement.\n- Pour les mathématiques niveau lycée, écris les formules avec des symboles standards et visibles: Δ, √, ×, ≤, ≥, ≠, ∈, ℝ quand c'est utile.\n- Écris les formules en LaTeX Markdown lisible: formules courtes entre $...$ et formules importantes seules entre $$...$$.\n- Ne mets jamais les formules dans un bloc de code. N'utilise pas de captures d'écran ni de pseudo-formules illisibles.\n- Pour une formule importante, donne aussi une ligne “Avec :” pour expliquer chaque symbole.\n\nÀ la fin de chaque réponse, ajoute une courte section intitulée “IA complémentaires possibles”. Dans cette section, propose 2 à 4 IA qui pourraient compléter la réponse selon le besoin: Perplexity pour les sources, Claude pour l'analyse longue ou le code, Gemini pour les documents longs ou multimodaux, Mistral/Codestral pour le français ou le code, Paul IA Image/Midjourney/Stable Diffusion pour l'image, ElevenLabs/Paul IA Audio pour l'audio, Sora/Runway/Pika/HeyGen/Synthesia pour la vidéo. Explique en une phrase pourquoi chaque IA pourrait être utile.";
 
 function requiredKeysForWorkflow(workflow: Workflow) {
   const keys: Record<Workflow, string[]> = {
@@ -79,7 +82,7 @@ function applyOpenAIPrimary(analysis: RouterAnalysis): RouterAnalysis {
   return {
     ...analysis,
     workflow: "openai_only",
-    modelsUsed: ["OpenAI"],
+    modelsUsed: ["Paul IA"],
     needsFinalWriting: true,
   };
 }
@@ -176,15 +179,15 @@ function buildDemoAnswer(request: string, profile: StudentProfile, analysis: Rou
   const profileLine = `Paul IA l'adapte pour un profil ${profile.level}, en ${profile.subject}, avec un style ${profile.style}.`;
 
   if (analysis.taskType === "image") {
-    return `${intro}\n\nPour que Paul IA crée vraiment l'image, ajoute une clé OPENAI_API_KEY dans le fichier CLES_API.txt. Ensuite, cette demande utilisera GPT Image côté serveur et l'image apparaîtra directement ici.\n\nIA choisie: GPT Image\nRaison: c'est le modèle prévu pour transformer une demande texte en image.`;
+    return `${intro}\n\nPour que Paul IA crée vraiment l'image, ajoute une clé API côté serveur. Ensuite, cette demande utilisera Paul IA Image et l'image apparaîtra directement ici.\n\nIA choisie: Paul IA Image\nRaison: c'est le modèle prévu pour transformer une demande texte en image.`;
   }
 
   if (analysis.taskType === "vision") {
-    return `${intro}\n\nPhoto détectée. En mode réel, Paul IA enverra l'image à OpenAI Vision côté serveur pour lire, expliquer, corriger ou résumer ce qui est visible.\n\nPour les maths, Paul IA écrira les formules avec des symboles lisibles et du LaTeX clair.`;
+    return `${intro}\n\nPhoto détectée. En mode réel, Paul IA analysera l'image côté serveur pour lire, expliquer, corriger ou résumer ce qui est visible.\n\nPour les maths, Paul IA écrira les formules avec des symboles lisibles et du LaTeX clair.`;
   }
 
   if (analysis.taskType === "audio") {
-    return `${intro}\n\nCette demande est bien détectée comme audio. Les IA prévues sont ElevenLabs, OpenAI Audio et Whisper, mais elles ne sont pas encore branchées dans ce MVP.`;
+    return `${intro}\n\nCette demande est bien détectée comme audio. Paul IA Audio est prévu pour gérer les usages vocaux et les transcriptions.`;
   }
 
   if (analysis.taskType === "video") {
@@ -214,7 +217,12 @@ function buildDemoAnswer(request: string, profile: StudentProfile, analysis: Rou
   return `${intro}\n\n${profileLine}\n\nRéponse démo:\n- Idée principale: identifier ce que le sujet demande vraiment.\n- Méthode: séparer définitions, exemples et points à mémoriser.\n- À retenir: une bonne réponse étudiante est claire, structurée et adaptée à l'objectif.\n\nMini-plan:\n1. Comprendre le sujet\n2. Repérer les notions importantes\n3. Rédiger ou réviser avec des phrases simples\n\nIA complémentaires possibles:\n- Perplexity: utile pour chercher des sources fiables.\n- Claude: utile pour approfondir ou analyser un long contenu.\n- Gemini: utile pour travailler avec des documents longs ou multimodaux.`;
 }
 
-async function runWorkflow(request: string, profile: StudentProfile, analysis: RouterAnalysis) {
+async function runWorkflow(
+  request: string,
+  profile: StudentProfile,
+  analysis: RouterAnalysis,
+  modelChoice: ModelChoice,
+) {
   const context = buildStudentContext(request, profile);
 
   if (analysis.workflow === "gemini_only") {
@@ -229,7 +237,7 @@ async function runWorkflow(request: string, profile: StudentProfile, analysis: R
     return callOpenAI([
       { role: "system", content: openAiPrompt },
       { role: "user", content: context },
-    ]);
+    ], { model: modelChoice.model });
   }
 
   let searchNotes = "";
@@ -269,7 +277,7 @@ async function runWorkflow(request: string, profile: StudentProfile, analysis: R
           .join("\n\n"),
       ),
     },
-  ]);
+  ], { model: modelChoice.model });
 }
 
 function buildImagePrompt(request: string, profile: StudentProfile) {
@@ -322,7 +330,7 @@ function buildVisionAnalysis(request: string): RouterAnalysis {
     needsFinalWriting: true,
     outputFormat: looksLikeCode ? "code" : "general",
     workflow: "openai_only",
-    modelsUsed: ["OpenAI Vision"],
+    modelsUsed: ["Paul IA Vision"],
   };
 }
 
@@ -352,15 +360,23 @@ export async function POST(request: Request) {
     const analysis = hasImageAttachment
       ? buildVisionAnalysis(effectiveRequest)
       : applyGeminiFallback(applyOpenAIPrimary(analyzeRequest(effectiveRequest, profile)));
+    const modelChoice = chooseChatGptModel(
+      normalizeModelPreference(body.modelPreference),
+      effectiveRequest,
+      profile,
+      analysis,
+    );
 
     if (hasImageAttachment) {
       if (!getServerApiKey("OPENAI_API_KEY")) {
         return NextResponse.json({
           ...analysis,
           finalAnswer: buildDemoAnswer(effectiveRequest, profile, analysis),
+          selectedModel: modelChoice.model,
+          modelSelectionReason: modelChoice.reason,
           providerNotes: [
-            "Mode démo: aucune clé OPENAI_API_KEY n'est configurée côté serveur.",
-            "La photo n'est pas envoyée à OpenAI en mode démo.",
+            "Mode démo: aucune clé API compatible n'est configurée côté serveur.",
+            "La photo n'est pas envoyée à Paul IA en mode démo.",
           ],
           demoMode: true,
         });
@@ -369,13 +385,17 @@ export async function POST(request: Request) {
       const visionResult = await callOpenAIVision(
         buildVisionPrompt(effectiveRequest, profile),
         body.imageAttachment!,
+        modelChoice.model,
       );
 
       return NextResponse.json({
         ...analysis,
         finalAnswer: visionResult.text,
+        selectedModel: visionResult.model,
+        modelSelectionReason: modelChoice.reason,
         providerNotes: [
-          `IA utilisée: OpenAI Vision (${visionResult.model}).`,
+          `IA utilisée: Paul IA Vision (${displayModelName(visionResult.model)}).`,
+          modelChoice.reason,
           `Niveau de détail image: ${visionResult.detail}.`,
           "La photo est envoyée côté serveur: la clé API n'est jamais exposée dans le navigateur.",
         ],
@@ -387,9 +407,11 @@ export async function POST(request: Request) {
       return NextResponse.json({
         ...analysis,
         finalAnswer: buildDemoAnswer(effectiveRequest, profile, analysis),
+        selectedModel: shouldUseOpenAIPrimary(analysis) ? modelChoice.model : undefined,
+        modelSelectionReason: shouldUseOpenAIPrimary(analysis) ? modelChoice.reason : undefined,
         providerNotes: [
           "Mode démo: aucune clé API compatible n'est configurée côté serveur.",
-          `IA qui aurait été utilisée: ${analysis.modelsUsed.join(", ")}.`,
+          `IA qui aurait été utilisée: ${analysis.modelsUsed.map(displayProviderName).join(", ")}.`,
         ],
         demoMode: true,
       });
@@ -401,13 +423,15 @@ export async function POST(request: Request) {
       return NextResponse.json({
         ...analysis,
         finalAnswer:
-          "Image générée. Paul IA a choisi GPT Image car ta demande demande une création visuelle directe.",
+          "Image générée. Paul IA a choisi Paul IA Image car ta demande demande une création visuelle directe.",
+        selectedModel: generatedImage.model,
+        modelSelectionReason: "Paul IA a choisi Paul IA Image pour créer une image.",
         generatedImage: {
           ...generatedImage,
-          provider: "OpenAI / GPT Image",
+          provider: "Paul IA Image",
         },
         providerNotes: [
-          `IA utilisée: OpenAI / GPT Image (${generatedImage.model}).`,
+          `IA utilisée: Paul IA Image (${displayModelName(generatedImage.model)}).`,
           `Options image: taille ${generatedImage.size}, qualité ${generatedImage.quality}, format ${generatedImage.format}.`,
           "La demande a été envoyée côté serveur: la clé API n'est jamais exposée dans le navigateur.",
         ],
@@ -430,15 +454,29 @@ export async function POST(request: Request) {
       });
     }
 
-    const finalAnswer = await runWorkflow(effectiveRequest, profile, analysis);
+    const finalAnswer = await runWorkflow(effectiveRequest, profile, analysis, modelChoice);
 
     return NextResponse.json({
       ...analysis,
       finalAnswer,
+      selectedModel: analysis.workflow === "gemini_only" ||
+        analysis.workflow === "claude_only"
+        ? analysis.modelsUsed[0]
+        : modelChoice.model,
+      modelSelectionReason: analysis.workflow === "gemini_only" ||
+        analysis.workflow === "claude_only"
+        ? "Paul IA a utilisé le meilleur fournisseur disponible avec les clés configurées."
+        : modelChoice.reason,
       providerNotes: [
-        `IA utilisée en premier: ${analysis.modelsUsed[0]}.`,
+        `IA utilisée en premier: ${displayProviderName(analysis.modelsUsed[0])}.`,
+        analysis.workflow === "openai_only" ||
+        analysis.workflow === "perplexity_then_openai" ||
+        analysis.workflow === "claude_then_openai" ||
+        analysis.workflow === "perplexity_then_claude_then_openai"
+          ? `Version Paul IA: ${displayModelName(modelChoice.model)}. ${modelChoice.reason}`
+          : undefined,
         "La réponse finale contient aussi des IA complémentaires possibles.",
-      ],
+      ].filter(Boolean),
       demoMode: false,
     });
   } catch (error) {

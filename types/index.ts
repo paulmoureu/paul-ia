@@ -46,6 +46,21 @@ export type Workflow =
   | "planned_video"
   | "gemini_only";
 
+export type ChatGptModelPreference =
+  | "auto"
+  | "gpt-5.5"
+  | "gpt-5.4"
+  | "gpt-5.4-mini"
+  | "gpt-5"
+  | "gpt-5-mini"
+  | "gpt-5-nano";
+
+export type ChatGptModelOption = {
+  id: ChatGptModelPreference;
+  label: string;
+  description: string;
+};
+
 export type AiStatus = "active" | "planned";
 
 export type AiProviderId =
@@ -98,6 +113,7 @@ export type GenerateRequestBody = {
   request: string;
   profile: StudentProfile;
   accessCode?: string;
+  modelPreference?: ChatGptModelPreference;
   imageAttachment?: ImageAttachment | null;
 };
 
@@ -121,6 +137,8 @@ export type GenerateResponse = RouterAnalysis & {
   };
   providerNotes?: string[];
   demoMode?: boolean;
+  selectedModel?: string;
+  modelSelectionReason?: string;
 };
 
 export type HistoryItem = {

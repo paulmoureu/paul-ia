@@ -34,9 +34,10 @@ function extractOutputText(data: {
 export async function callOpenAIVision(
   prompt: string,
   imageAttachment: ImageAttachment,
+  preferredModel?: string,
 ): Promise<OpenAIVisionResult> {
   const apiKey = getServerApiKey("OPENAI_API_KEY");
-  const model = getVisionOption("OPENAI_VISION_MODEL", "gpt-4.1-mini");
+  const model = preferredModel || getVisionOption("OPENAI_VISION_MODEL", "gpt-5");
   const detail = getVisionOption("OPENAI_VISION_DETAIL", "auto");
 
   if (!apiKey) {

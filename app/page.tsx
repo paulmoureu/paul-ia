@@ -3,9 +3,17 @@
 import { useEffect, useState } from "react";
 import { HistoryPanel } from "@/components/HistoryPanel";
 import { ProfileForm } from "@/components/ProfileForm";
+import { RealtimeVoiceAgent } from "@/components/RealtimeVoiceAgent";
 import { RequestBox } from "@/components/RequestBox";
 import { ResultCard } from "@/components/ResultCard";
-import type { GenerateResponse, HistoryItem, ImageAttachment, StudentProfile } from "@/types";
+import { chatGptModelOptions } from "@/lib/chatgpt-models";
+import type {
+  ChatGptModelPreference,
+  GenerateResponse,
+  HistoryItem,
+  ImageAttachment,
+  StudentProfile,
+} from "@/types";
 
 const initialProfile: StudentProfile = {
   level: "lycée",
@@ -36,6 +44,7 @@ export default function Home() {
   const [profile, setProfile] = useState<StudentProfile>(initialProfile);
   const [studentRequest, setStudentRequest] = useState("");
   const [accessCode, setAccessCode] = useState("");
+  const [modelPreference, setModelPreference] = useState<ChatGptModelPreference>("auto");
   const [imageAttachment, setImageAttachment] = useState<ImageAttachment | null>(null);
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -50,6 +59,7 @@ export default function Home() {
       const savedResult = window.localStorage.getItem("paul-ia-result");
       const savedHistory = window.localStorage.getItem("paul-ia-history");
       const savedAccessCode = window.localStorage.getItem("paul-ia-access-code");
+      const savedModelPreference = window.localStorage.getItem("paul-ia-model-preference");
 
       if (savedProfile) {
         setProfile({
@@ -64,6 +74,10 @@ export default function Home() {
 
       if (savedAccessCode) {
         setAccessCode(savedAccessCode);
+      }
+
+      if (savedModelPreference) {
+        setModelPreference(savedModelPreference as ChatGptModelPreference);
       }
 
       if (savedResult) {
@@ -96,6 +110,11 @@ export default function Home() {
     if (!hasLoadedLocalStorage) return;
     window.localStorage.setItem("paul-ia-access-code", accessCode);
   }, [accessCode, hasLoadedLocalStorage]);
+
+  useEffect(() => {
+    if (!hasLoadedLocalStorage) return;
+    window.localStorage.setItem("paul-ia-model-preference", modelPreference);
+  }, [hasLoadedLocalStorage, modelPreference]);
 
   useEffect(() => {
     if (!hasLoadedLocalStorage) return;
@@ -156,6 +175,7 @@ export default function Home() {
           request: studentRequest,
           profile,
           accessCode,
+          modelPreference,
           imageAttachment,
         }),
       });
@@ -188,7 +208,7 @@ export default function Home() {
               L’assistant IA qui travaille comme un vrai copilote d’étude.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-700">
-              Tu écris ton besoin. Paul IA comprend ton profil, répond d’abord avec OpenAI, puis
+              Tu écris ton besoin. Paul IA comprend ton profil, choisit la bonne version, puis
               indique les autres IA qui pourraient compléter ton travail : sources, code, image,
               oral, résumé ou fiche de révision.
             </p>
@@ -212,9 +232,9 @@ export default function Home() {
                 </p>
               </div>
               <div className="py-4">
-                <h2 className="text-xl font-black tracking-tight text-ink">OpenAI en premier</h2>
+                <h2 className="text-xl font-black tracking-tight text-ink">Paul IA en premier</h2>
                 <p className="mt-2 text-sm leading-7 text-slate-600">
-                  La réponse principale est générée avec OpenAI, puis enrichie par des suggestions
+                  La réponse principale est générée avec Paul IA, puis enrichie par des suggestions
                   d’IA complémentaires.
                 </p>
               </div>
@@ -261,9 +281,31 @@ export default function Home() {
                 Ce code protège l'accès aux générations IA.
               </span>
             </label>
+            <label className="mb-5 block space-y-2">
+              <span className="text-sm font-semibold text-ink">Version Paul IA</span>
+              <select
+                value={modelPreference}
+                onChange={(event) =>
+                  setModelPreference(event.target.value as ChatGptModelPreference)
+                }
+                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-ink outline-none transition focus:border-lagoon focus:ring-4 focus:ring-lagoon/10"
+              >
+                {chatGptModelOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <span className="block text-sm leading-6 text-slate-600">
+                En mode Auto, Paul IA choisit le modèle selon la demande. Tu peux aussi forcer une
+                version précise.
+              </span>
+            </label>
+            <RealtimeVoiceAgent accessCode={accessCode} profile={profile} />
             <RequestBox
               value={studentRequest}
               isLoading={isLoading}
+              accessCode={accessCode}
               imageAttachment={imageAttachment}
               onChange={setStudentRequest}
               onImageAttachmentChange={setImageAttachment}
@@ -273,7 +315,7 @@ export default function Home() {
         </div>
 
         <div className="mt-8 grid gap-8 xl:grid-cols-[1.25fr_0.75fr] xl:items-start">
-          <ResultCard result={result} error={error} />
+          <ResultCard result={result} error={error} accessCode={accessCode} />
           <HistoryPanel
             history={history}
             onRestore={restoreHistoryItem}
