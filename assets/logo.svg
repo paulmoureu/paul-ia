@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Au Panier Douillet">
-  <rect width="64" height="64" rx="14" fill="#315d4a"/>
-  <path d="M15 33 32 18l17 15v18a3 3 0 0 1-3 3H18a3 3 0 0 1-3-3V33Z" fill="none" stroke="#fffaf2" stroke-width="3.5" stroke-linejoin="round"/>
-  <path d="M24 41c0-4 3-7 8-7s8 3 8 7c0 4-3 7-8 7s-8-3-8-7Z" fill="#fffaf2"/>
-  <circle cx="22" cy="32" r="3" fill="#fffaf2"/>
-  <circle cx="30" cy="29" r="3" fill="#fffaf2"/>
-  <circle cx="38" cy="29" r="3" fill="#fffaf2"/>
-  <circle cx="46" cy="32" r="3" fill="#fffaf2"/>
-</svg>
