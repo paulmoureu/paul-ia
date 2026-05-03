@@ -35,6 +35,7 @@ function prepareResultForStorage(result: GenerateResponse): GenerateResponse {
 export default function Home() {
   const [profile, setProfile] = useState<StudentProfile>(initialProfile);
   const [studentRequest, setStudentRequest] = useState("");
+  const [accessCode, setAccessCode] = useState("");
   const [imageAttachment, setImageAttachment] = useState<ImageAttachment | null>(null);
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -48,6 +49,7 @@ export default function Home() {
       const savedRequest = window.localStorage.getItem("paul-ia-request");
       const savedResult = window.localStorage.getItem("paul-ia-result");
       const savedHistory = window.localStorage.getItem("paul-ia-history");
+      const savedAccessCode = window.localStorage.getItem("paul-ia-access-code");
 
       if (savedProfile) {
         setProfile({
@@ -58,6 +60,10 @@ export default function Home() {
 
       if (savedRequest) {
         setStudentRequest(savedRequest);
+      }
+
+      if (savedAccessCode) {
+        setAccessCode(savedAccessCode);
       }
 
       if (savedResult) {
@@ -85,6 +91,11 @@ export default function Home() {
     if (!hasLoadedLocalStorage) return;
     window.localStorage.setItem("paul-ia-request", studentRequest);
   }, [hasLoadedLocalStorage, studentRequest]);
+
+  useEffect(() => {
+    if (!hasLoadedLocalStorage) return;
+    window.localStorage.setItem("paul-ia-access-code", accessCode);
+  }, [accessCode, hasLoadedLocalStorage]);
 
   useEffect(() => {
     if (!hasLoadedLocalStorage) return;
@@ -144,6 +155,7 @@ export default function Home() {
         body: JSON.stringify({
           request: studentRequest,
           profile,
+          accessCode,
           imageAttachment,
         }),
       });
@@ -236,6 +248,19 @@ export default function Home() {
               </p>
               <h2 className="mt-2 text-3xl font-black text-ink">Explique ton besoin</h2>
             </div>
+            <label className="mb-5 block space-y-2">
+              <span className="text-sm font-semibold text-ink">Code d'accès privé</span>
+              <input
+                type="password"
+                value={accessCode}
+                onChange={(event) => setAccessCode(event.target.value)}
+                placeholder="Entre le code pour utiliser Paul IA"
+                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-base font-semibold text-ink outline-none transition placeholder:text-slate-400 focus:border-lagoon focus:ring-4 focus:ring-lagoon/10"
+              />
+              <span className="block text-sm leading-6 text-slate-600">
+                Ce code protège l'accès aux générations IA.
+              </span>
+            </label>
             <RequestBox
               value={studentRequest}
               isLoading={isLoading}

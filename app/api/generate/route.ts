@@ -18,6 +18,16 @@ const defaultProfile: StudentProfile = {
   customInstructions: "",
 };
 
+function hasValidAccessCode(accessCode?: string) {
+  const expectedAccessCode = getServerApiKey("PAUL_IA_ACCESS_CODE") || process.env.PAUL_IA_ACCESS_CODE;
+
+  if (!expectedAccessCode) {
+    return true;
+  }
+
+  return accessCode?.trim() === expectedAccessCode.trim();
+}
+
 const perplexityPrompt =
   "Tu es un moteur de recherche pour étudiants. Recherche des informations fiables, récentes et sourcées sur le sujet suivant. Réponds avec les points clés, les chiffres importants et les sources utiles. Ne rédige pas la réponse finale.";
 
@@ -329,6 +339,13 @@ export async function POST(request: Request) {
 
     if (!body.profile) {
       return NextResponse.json({ error: "Le profil étudiant est obligatoire." }, { status: 400 });
+    }
+
+    if (!hasValidAccessCode(body.accessCode)) {
+      return NextResponse.json(
+        { error: "Code d'accès incorrect. L'utilisation de Paul IA est privée." },
+        { status: 401 },
+      );
     }
 
     const profile = normalizeProfile(body.profile);

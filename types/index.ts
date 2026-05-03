@@ -97,6 +97,7 @@ export type RouterAnalysis = {
 export type GenerateRequestBody = {
   request: string;
   profile: StudentProfile;
+  accessCode?: string;
   imageAttachment?: ImageAttachment | null;
 };
 
