@@ -14,12 +14,6 @@ export function SiteHeader() {
           >
             Accueil
           </Link>
-          <Link
-            href="/about"
-            className="rounded-full bg-ink px-4 py-2 text-sm font-bold text-white transition hover:bg-lagoon active:scale-[0.98]"
-          >
-            À propos
-          </Link>
         </div>
       </nav>
     </header>

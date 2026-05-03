@@ -187,12 +187,6 @@ export default function Home() {
               >
                 Essayer Paul IA
               </a>
-              <a
-                href="/about"
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-7 py-3 text-sm font-black text-ink transition hover:-translate-y-0.5 hover:border-lagoon hover:text-lagoon active:scale-[0.98]"
-              >
-                Voir le créateur
-              </a>
             </div>
           </div>
 
